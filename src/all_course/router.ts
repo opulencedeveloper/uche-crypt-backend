@@ -20,6 +20,6 @@ AllCoursesRouter.get(
 );
 
 AllCoursesRouter.get(
-  "/courses/:slug",
+  "/course/:slug",
   wrapAsync(allCoursesController.fetchAllAdsCourseDetail)
 );
