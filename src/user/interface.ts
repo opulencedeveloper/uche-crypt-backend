@@ -1,14 +1,15 @@
-import { Document } from "mongoose";
+import { Document, StringExpressionOperatorReturningNumber } from "mongoose";
 
 interface IEnrolledCourseContent {
-  video_url: string;
-  module_number: number;
-  title: string;
-  description: string;
-  watched: boolean;
+  module_id: string;
+  // video_url: string;
+  // module_number: number | undefined;
+  // title: string | undefined;
+  // description: string | undefined;
+  // watched: boolean | undefined;
 }
 
-interface IEnrolledCourses {
+export interface IEnrolledCourses {
   course_id: string;
   enrolled_course_content: IEnrolledCourseContent[];
 }

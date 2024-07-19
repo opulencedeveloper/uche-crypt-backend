@@ -43,6 +43,6 @@ export const isAuth = async (
       data: null,
     });
   }
-  (req as CustomRequest).userId = decodedToken.userId;
+  (req as CustomRequest).user_id = decodedToken.userId;
   next();
 };

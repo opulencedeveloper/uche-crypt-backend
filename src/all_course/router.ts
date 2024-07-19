@@ -8,9 +8,8 @@ import { allCoursesValidator } from "./validator";
 export const AllCoursesRouter = Router();
 
 AllCoursesRouter.post(
-  "/courses",
-  [
-    // isAuth,
+  "/admin/courses",
+  [isAuth,
      allCoursesValidator.uploadCourse],
   wrapAsync(allCoursesController.uploadCourse)
 );

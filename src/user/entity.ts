@@ -1,24 +1,11 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema} from "mongoose";
 
 import { IUser } from "./interface";
 
 
 const enrolledCourseContentSchema: Schema = new Schema({
-  video_url: {
-    type: String,
-    required: true,
-  },
-  module_number: {
-    type: Number,
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
+  module_id: {
+    type: String
   },
   watched: {
     type: Boolean,

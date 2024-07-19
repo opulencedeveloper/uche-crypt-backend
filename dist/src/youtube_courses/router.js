@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.YoutubeCoursesRouter = void 0;
+const express_1 = require("express");
+const controller_1 = require("./controller");
+const utils_1 = require("../utils");
+const is_auth_1 = require("../middleware/is_auth");
+const validator_1 = require("./validator");
+exports.YoutubeCoursesRouter = (0, express_1.Router)();
+exports.YoutubeCoursesRouter.post("/courses/youtube", [is_auth_1.isAuth, validator_1.youTubeCoursesValidator.postYoutubeCourse], (0, utils_1.wrapAsync)(controller_1.youtubeCoursesController.postYoutubeCourse));
+exports.YoutubeCoursesRouter.get("/courses/youtube", (0, utils_1.wrapAsync)(controller_1.youtubeCoursesController.getYoutubeCourses));

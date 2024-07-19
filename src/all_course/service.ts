@@ -80,6 +80,15 @@ class AllCoursesService {
     //exec() ensures that an object is returned instead of an array with 1 item
     return ads_courses_detail;
   }
+
+  public async find_course_by_id(req: Request) {
+    const { course_id } = req.params;
+
+    const course = await AllCourse.findById(course_id);
+
+   return course;
+
+  }
 }
 
 export const allCoursesService = new AllCoursesService();

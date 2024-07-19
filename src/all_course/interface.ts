@@ -1,10 +1,14 @@
-import { Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
+
+interface IModule {
+  _id: mongoose.Types.ObjectId;
+  video_url: string;
+  title: string;
+}
 
 interface ICourseContent {
-  video_url: string;
-  module_number: number;
   title: string;
-  description: string;
+  modules: IModule[];
 }
 
 export interface IAllCourses extends Document {

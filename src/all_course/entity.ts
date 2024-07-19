@@ -23,7 +23,7 @@ const allCoursesSchema = new Schema({
   },
   slug: {
     type: String,
-    required: true
+    required: true,
   },
   details: {
     type: [String],
@@ -31,26 +31,26 @@ const allCoursesSchema = new Schema({
   },
   introduction: {
     type: String,
-    required: true
+    required: true,
   },
   course_content: [
     {
-      video_url: {
-        type: String,
-        required: true
-      },
-      module_number: {
-        type: Number,
-        required: true
-      },
       title: {
         type: String,
-        required: true
+        required: true,
       },
-      description: {
-        type: String,
-        required: true
-      }
+      modules: [
+        {
+          video_url: {
+            type: String,
+            required: true,
+          },
+          title: {
+            type: String,
+            required: true,
+          },
+        },
+      ],
     },
   ],
 });

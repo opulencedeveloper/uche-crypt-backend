@@ -7,5 +7,5 @@ export interface ISendEmail {
 }
 
 export interface CustomRequest extends Request {
-  userId: string;
+  user_id: string;
 }
