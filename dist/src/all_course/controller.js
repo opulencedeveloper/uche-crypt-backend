@@ -44,9 +44,16 @@ class AllCoursesController {
     fetchAllAdsCourseDetail(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const ad_courses_detail = yield service_1.allCoursesService.fetchAllAdsCourseDetail(req);
+            if (!ad_courses_detail) {
+                return res.status(404).json({
+                    message: enum_1.MessageResponse.Error,
+                    description: "Course slug does not exist!",
+                    data: null,
+                });
+            }
             return res.status(200).json({
                 message: enum_1.MessageResponse.Success,
-                description: "Courses fetched successfully!",
+                description: "Course fetched successfully!",
                 data: ad_courses_detail,
             });
         });

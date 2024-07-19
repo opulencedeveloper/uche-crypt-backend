@@ -39,9 +39,17 @@ class AllCoursesController {
       req
     );
 
+    if(!ad_courses_detail) {
+      return res.status(404).json({
+        message: MessageResponse.Error,
+        description: "Course slug does not exist!",
+        data: null,
+      });
+    }
+
     return res.status(200).json({
       message: MessageResponse.Success,
-      description: "Courses fetched successfully!",
+      description: "Course fetched successfully!",
       data: ad_courses_detail,
     });
   }
