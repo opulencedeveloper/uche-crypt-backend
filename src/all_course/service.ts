@@ -11,7 +11,7 @@ class AllCoursesService {
       description,
       price,
       details,
-      slashedPrice,
+      slashed_price,
       introduction,
       course_content,
     } = req.body;
@@ -23,7 +23,7 @@ class AllCoursesService {
       title,
       description,
       price,
-      slashedPrice,
+      slashed_price,
       slug: slugified,
       details,
       introduction,

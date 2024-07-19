@@ -18,14 +18,14 @@ const utils_1 = require("../utils");
 class AllCoursesService {
     uploadCourse(req) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { video_url, title, description, price, details, slashedPrice, introduction, course_content, } = req.body;
+            const { video_url, title, description, price, details, slashed_price, introduction, course_content, } = req.body;
             const slugified = (0, utils_1.slugify)(title);
             const course = new entity_1.default({
                 video_url,
                 title,
                 description,
                 price,
-                slashedPrice,
+                slashed_price,
                 slug: slugified,
                 details,
                 introduction,

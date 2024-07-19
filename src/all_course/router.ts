@@ -9,7 +9,7 @@ export const AllCoursesRouter = Router();
 
 AllCoursesRouter.post(
   "/admin/courses",
-  [isAuth,
+  [ isAuth,
      allCoursesValidator.uploadCourse],
   wrapAsync(allCoursesController.uploadCourse)
 );

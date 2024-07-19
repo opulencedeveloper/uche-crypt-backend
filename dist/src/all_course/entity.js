@@ -22,6 +22,10 @@ const allCoursesSchema = new Schema({
         type: Number,
         required: true,
     },
+    slashed_price: {
+        type: Number,
+        required: true,
+    },
     slug: {
         type: String,
         required: true,
