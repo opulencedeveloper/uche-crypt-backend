@@ -31,33 +31,36 @@ class UserService {
             return user;
         });
     }
-    enroll_to_course(user_id, course_id, payment_reference_id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // const { user_id } = req as CustomRequest;
-            // const { course_id } = req.params;
-            let user = yield entity_1.default.findOne({
-                _id: user_id,
-                "enrolled_courses.payment_reference_id": payment_reference_id,
-            }).select("enrolled_courses");
-            yield entity_1.default.findById(user_id).select("enrolled_courses");
-            const course = yield entity_2.default.findById(course_id);
-            if (!user || !course)
-                return;
-            let enrolledCourse = course.course_content.flatMap((content) => content.modules.map((module) => ({
-                module_id: module._id.toString(),
-                watched: false,
-            })));
-            const newEnrolledCourse = {
-                course_id: course_id,
-                paid: true,
-                payment_reference_id: payment_reference_id,
-                enrolled_course_content: enrolledCourse,
-            };
-            user.enrolled_courses.push(newEnrolledCourse);
-            user = yield user.save();
-            return user;
-        });
-    }
+    // public async enroll_to_course(
+    //   user_id: string,
+    //   course_id: string,
+    //   payment_reference_id: string
+    // ) {
+    //   // const { user_id } = req as CustomRequest;
+    //   // const { course_id } = req.params;
+    //   let user = await User.findOne({
+    //     _id: user_id,
+    //     "enrolled_courses.payment_reference_id": payment_reference_id,
+    //   }).select("enrolled_courses");
+    //   await User.findById(user_id).select("enrolled_courses");
+    //   const course = await AllCourse.findById(course_id);
+    //   if (!user || !course) return;
+    //   let enrolledCourse = course.course_content.flatMap((content) =>
+    //     content.modules.map((module) => ({
+    //       module_id: module._id.toString(),
+    //       watched: false,
+    //     }))
+    //   );
+    //   const newEnrolledCourse: IEnrolledCourses = {
+    //     course_id: course_id,
+    //     paid: true,
+    //     payment_reference_id: payment_reference_id,
+    //     enrolled_course_content: enrolledCourse,
+    //   };
+    //   user.enrolled_courses.push(newEnrolledCourse);
+    //   user = await user.save();
+    //   return user;
+    // }
     fetch_enrolled_courses_detail(req) {
         return __awaiter(this, void 0, void 0, function* () {
             const { course_id } = req.params;

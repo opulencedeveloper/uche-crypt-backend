@@ -1,9 +1,7 @@
 import { Request } from "express";
-import mongoose from "mongoose";
 
 import User from "./entity";
 import AllCourse from "../all_course/entity";
-import { IEnrolledCourses } from "./interface";
 import { CustomRequest } from "../utils/interface";
 
 class UserService {
@@ -23,46 +21,46 @@ class UserService {
     return user;
   }
 
-  public async enroll_to_course(
-    user_id: string,
-    course_id: string,
-    payment_reference_id: string
-  ) {
-    // const { user_id } = req as CustomRequest;
+  // public async enroll_to_course(
+  //   user_id: string,
+  //   course_id: string,
+  //   payment_reference_id: string
+  // ) {
+  //   // const { user_id } = req as CustomRequest;
 
-    // const { course_id } = req.params;
+  //   // const { course_id } = req.params;
 
-    let user = await User.findOne({
-      _id: user_id,
-      "enrolled_courses.payment_reference_id": payment_reference_id,
-    }).select("enrolled_courses");
+  //   let user = await User.findOne({
+  //     _id: user_id,
+  //     "enrolled_courses.payment_reference_id": payment_reference_id,
+  //   }).select("enrolled_courses");
 
-    await User.findById(user_id).select("enrolled_courses");
+  //   await User.findById(user_id).select("enrolled_courses");
 
-    const course = await AllCourse.findById(course_id);
+  //   const course = await AllCourse.findById(course_id);
 
-    if (!user || !course) return;
+  //   if (!user || !course) return;
 
-    let enrolledCourse = course.course_content.flatMap((content) =>
-      content.modules.map((module) => ({
-        module_id: module._id.toString(),
-        watched: false,
-      }))
-    );
+  //   let enrolledCourse = course.course_content.flatMap((content) =>
+  //     content.modules.map((module) => ({
+  //       module_id: module._id.toString(),
+  //       watched: false,
+  //     }))
+  //   );
 
-    const newEnrolledCourse: IEnrolledCourses = {
-      course_id: course_id,
-      paid: true,
-      payment_reference_id: payment_reference_id,
-      enrolled_course_content: enrolledCourse,
-    };
+  //   const newEnrolledCourse: IEnrolledCourses = {
+  //     course_id: course_id,
+  //     paid: true,
+  //     payment_reference_id: payment_reference_id,
+  //     enrolled_course_content: enrolledCourse,
+  //   };
 
-    user.enrolled_courses.push(newEnrolledCourse);
+  //   user.enrolled_courses.push(newEnrolledCourse);
 
-    user = await user.save();
+  //   user = await user.save();
 
-    return user;
-  }
+  //   return user;
+  // }
 
   public async fetch_enrolled_courses_detail(req: Request) {
     const { course_id } = req.params;

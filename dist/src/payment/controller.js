@@ -85,10 +85,10 @@ class PaymentController {
             const secret = "sk_test_166f55da8659798259ecba885f1137cf3b13d0e7";
             const hash = crypto_1.default.createHmac('sha512', secret).update(JSON.stringify(req.body)).digest('hex');
             if (hash == req.headers['x-paystack-signature']) {
-                // Retrieve the request's body
                 const event = req.body;
-                console.log("payyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyysttttttttttttttttttttttack", event);
                 if (event.event === "charge.success") {
+                    console.log("payyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyysttttttttttttttttttttttack", event);
+                    yield service_3.paymentService.enroll_to_course(event.data.reference);
                 }
             }
         });
