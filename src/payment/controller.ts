@@ -84,7 +84,6 @@ class PaymentController {
       description: "Sucess!",
       data: {
         price: converted_to_kobo,
-        respo: response,
         authorization_url: response.data.data.authorization_url,
         reference: response.data.data.reference,
       },
