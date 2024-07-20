@@ -92,13 +92,11 @@ class PaymentController {
 
   public async verify_payment(req: Request, res: Response) {
     const secret = "sk_test_166f55da8659798259ecba885f1137cf3b13d0e7";
-    const hash = crypto
-      .createHmac("sha512", secret)
-      .update(JSON.stringify(req.body))
-      .digest("hex");
+    const hash = crypto.createHmac('sha512', secret).update(JSON.stringify(req.body)).digest('hex');
+    if (hash == req.headers['x-paystack-signature']) {
+    // Retrieve the request's body
+    const event = req.body;
 
-    if (hash === req.headers["x-paystack-signature"]) {
-      const event = req.body;
 
       console.log(
         "payyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyysttttttttttttttttttttttack",
@@ -107,8 +105,9 @@ class PaymentController {
 
       if (event.event === "charge.success") {
       }
-    }
+    
   }
+} 
 }
 
 export const paymentController = new PaymentController();
