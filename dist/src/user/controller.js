@@ -8,12 +8,61 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userController = void 0;
+const axios_1 = __importDefault(require("axios"));
 const enum_1 = require("../utils/enum");
 const service_1 = require("./service");
 const service_2 = require("../all_course/service");
 class UserController {
+    verify_payment(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const secret = "sk_test_166f55da8659798259ecba885f1137cf3b13d0e7";
+            const hash = require("crypto")
+                .createHmac("sha512", secret)
+                .update(JSON.stringify(req.body))
+                .digest("hex");
+            if (hash === req.headers["x-paystack-signature"]) {
+                const event = req.body;
+                console.log("payyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyysttttttttttttttttttttttack", event);
+                if (event.event === "charge.success") {
+                }
+            }
+        });
+    }
+    pay(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { user_id } = req;
+            const { email, amount } = req.body;
+            const transactionDetails = {
+                email: email,
+                amount: amount,
+                metadata: {
+                    custom_fields: [
+                        {
+                            user_id: user_id,
+                        },
+                    ],
+                },
+            };
+            const response = yield axios_1.default.post("https://api.paystack.co/transaction/initialize", transactionDetails, {
+                headers: {
+                    Authorization: `Bearer sk_test_166f55da8659798259ecba885f1137cf3b13d0e7`,
+                },
+            });
+            return res.status(200).json({
+                message: enum_1.MessageResponse.Success,
+                description: "Sucess!",
+                data: {
+                    authorization_url: response.data.data.authorization_url,
+                    reference: response.data.data.reference,
+                },
+            });
+        });
+    }
     enroll_to_course(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const course_exist = yield service_2.allCoursesService.find_course_by_id(req);

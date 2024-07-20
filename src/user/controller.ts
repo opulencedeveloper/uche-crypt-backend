@@ -1,10 +1,63 @@
 import { Request, Response } from "express";
+import axios from "axios";
 
 import { MessageResponse } from "../utils/enum";
 import { userService } from "./service";
 import { allCoursesService } from "../all_course/service";
+import { CustomRequest } from "../utils/interface";
 
 class UserController {
+  public async verify_payment(req: Request, res: Response) {
+    const secret = "sk_test_166f55da8659798259ecba885f1137cf3b13d0e7";
+    const hash = require("crypto")
+      .createHmac("sha512", secret)
+      .update(JSON.stringify(req.body))
+      .digest("hex");
+
+    if (hash === req.headers["x-paystack-signature"]) {
+      const event = req.body;
+
+      console.log("payyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyysttttttttttttttttttttttack", event)
+
+      if (event.event === "charge.success") {
+       
+      }
+    }
+  }
+  public async pay(req: Request, res: Response) {
+    const { user_id } = req as CustomRequest;
+    const { email, amount } = req.body;
+
+    const transactionDetails = {
+      email: email,
+      amount: amount,
+      metadata: {
+        custom_fields: [
+          {
+            user_id: user_id,
+          },
+        ],
+      },
+    };
+    const response = await axios.post(
+      "https://api.paystack.co/transaction/initialize",
+      transactionDetails,
+      {
+        headers: {
+          Authorization: `Bearer sk_test_166f55da8659798259ecba885f1137cf3b13d0e7`,
+        },
+      }
+    );
+    return res.status(200).json({
+      message: MessageResponse.Success,
+      description: "Sucess!",
+      data: {
+        authorization_url: response.data.data.authorization_url,
+        reference: response.data.data.reference,
+      },
+    });
+  }
+
   public async enroll_to_course(req: Request, res: Response) {
     const course_exist = await allCoursesService.find_course_by_id(req);
 

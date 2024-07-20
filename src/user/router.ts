@@ -13,6 +13,17 @@ UserRouter.post(
   wrapAsync(userController.enroll_to_course)
 );
 
+UserRouter.post(
+  "/pay",
+  [isAuth],
+  wrapAsync(userController.pay)
+);
+
+UserRouter.post(
+  "/uchecrypt/webhook",
+  wrapAsync(userController.verify_payment)
+);
+
 UserRouter.get(
   "/user/course/enrolled",
   [isAuth],
