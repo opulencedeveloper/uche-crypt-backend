@@ -43,8 +43,9 @@ class PaymentController {
                     data: null,
                 });
             }
+            const converted_to_kobo = course_exist.price * 100;
             const transactionDetails = {
-                amount: course_exist.price,
+                amount: converted_to_kobo,
                 email: userData.email,
                 metadata: {
                     custom_fields: [
@@ -68,13 +69,12 @@ class PaymentController {
                     data: null,
                 });
             }
-            const converted_to_kobo = course_exist.price * 100;
             return res.status(201).json({
                 message: enum_1.MessageResponse.Success,
                 description: "Sucess!",
                 data: {
                     price: converted_to_kobo,
-                    res: response,
+                    respo: response,
                     authorization_url: response.data.data.authorization_url,
                     reference: response.data.data.reference,
                 },
