@@ -20,12 +20,15 @@ class PaymentService {
       };
 
       user.enrolled_courses.push(newEnrolledCourse);
+
+      await user.save();
     }
+    
     return user;
   }
 
   public async enroll_to_course(payment_reference_id: string) {
-    
+
     let user = await User.findOne({
       "enrolled_courses.payment_reference_id": payment_reference_id,
     }).select("enrolled_courses");

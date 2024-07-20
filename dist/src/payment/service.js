@@ -26,6 +26,7 @@ class PaymentService {
                     payment_reference_id: payment_reference_id,
                 };
                 user.enrolled_courses.push(newEnrolledCourse);
+                yield user.save();
             }
             return user;
         });
