@@ -49,7 +49,7 @@ class AllCoursesService {
             return course;
         });
     }
-    //fetches courses by slug excluding course content video urls and slug
+    //fetches courses by slug excluding course_content video urls and slug
     fetchAllAdsCourseDetail(req) {
         return __awaiter(this, void 0, void 0, function* () {
             const { slug } = req.params;

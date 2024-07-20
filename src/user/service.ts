@@ -21,56 +21,16 @@ class UserService {
     return user;
   }
 
-  // public async enroll_to_course(
-  //   user_id: string,
-  //   course_id: string,
-  //   payment_reference_id: string
-  // ) {
-  //   // const { user_id } = req as CustomRequest;
-
-  //   // const { course_id } = req.params;
-
-  //   let user = await User.findOne({
-  //     _id: user_id,
-  //     "enrolled_courses.payment_reference_id": payment_reference_id,
-  //   }).select("enrolled_courses");
-
-  //   await User.findById(user_id).select("enrolled_courses");
-
-  //   const course = await AllCourse.findById(course_id);
-
-  //   if (!user || !course) return;
-
-  //   let enrolledCourse = course.course_content.flatMap((content) =>
-  //     content.modules.map((module) => ({
-  //       module_id: module._id.toString(),
-  //       watched: false,
-  //     }))
-  //   );
-
-  //   const newEnrolledCourse: IEnrolledCourses = {
-  //     course_id: course_id,
-  //     paid: true,
-  //     payment_reference_id: payment_reference_id,
-  //     enrolled_course_content: enrolledCourse,
-  //   };
-
-  //   user.enrolled_courses.push(newEnrolledCourse);
-
-  //   user = await user.save();
-
-  //   return user;
-  // }
-
   public async mark_video_as_watched(req: Request) {
     const { course_id, module_id } = req.query;
+
     const { user_id } = req as CustomRequest;
 
     const user = await User.findOneAndUpdate(
       {
         _id: user_id,
         "enrolled_courses.course_id": course_id,
-        "enrolled_courses.enrolled_course_content.module_id": module_id,
+        "enrolled_courses.enrolled_course_content.module_id": module_id
       },
       {
         // enrolled_courses: This is the array of courses that the user is enrolled in.
@@ -100,8 +60,6 @@ class UserService {
 
     const { user_id } = req as CustomRequest;
 
-    console.log(user_id, course_id);
-
     const course = await AllCourse.findById(course_id);
 
     const user = await User.findOne({
@@ -116,10 +74,11 @@ class UserService {
       (ec) => ec.course_id === course_id
     );
 
-    if (!enrolledCourse || enrolledCourse.enrolled_course_content === undefined)
+    if (!enrolledCourse || !enrolledCourse.enrolled_course_content)
       return;
 
     const existingContentMap = new Map();
+
     for (const content of enrolledCourse.enrolled_course_content) {
       existingContentMap.set(content.module_id, content);
     }
@@ -170,6 +129,48 @@ class UserService {
 
     return user;
   }
+
+  
+  // public async enroll_to_course(
+  //   user_id: string,
+  //   course_id: string,
+  //   payment_reference_id: string
+  // ) {
+  //   // const { user_id } = req as CustomRequest;
+
+  //   // const { course_id } = req.params;
+
+  //   let user = await User.findOne({
+  //     _id: user_id,
+  //     "enrolled_courses.payment_reference_id": payment_reference_id,
+  //   }).select("enrolled_courses");
+
+  //   await User.findById(user_id).select("enrolled_courses");
+
+  //   const course = await AllCourse.findById(course_id);
+
+  //   if (!user || !course) return;
+
+  //   let enrolledCourse = course.course_content.flatMap((content) =>
+  //     content.modules.map((module) => ({
+  //       module_id: module._id.toString(),
+  //       watched: false,
+  //     }))
+  //   );
+
+  //   const newEnrolledCourse: IEnrolledCourses = {
+  //     course_id: course_id,
+  //     paid: true,
+  //     payment_reference_id: payment_reference_id,
+  //     enrolled_course_content: enrolledCourse,
+  //   };
+
+  //   user.enrolled_courses.push(newEnrolledCourse);
+
+  //   user = await user.save();
+
+  //   return user;
+  // }
 
   // public async enroll_to_course(req: Request) {
   //   const { user_id } = req as CustomRequest;

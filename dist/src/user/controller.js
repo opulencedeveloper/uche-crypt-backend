@@ -14,38 +14,6 @@ const enum_1 = require("../utils/enum");
 const service_1 = require("./service");
 const service_2 = require("../all_course/service");
 class UserController {
-    // public async enroll_to_course(req: Request, res: Response) {
-    //   const course_exist = await allCoursesService.find_course_by_id(req);
-    //   if (!course_exist) {
-    //     return res.status(404).json({
-    //       message: MessageResponse.Error,
-    //       description: "Course not found!",
-    //       data: null,
-    //     });
-    //   }
-    //   const has_enrolled = await userService.find_user_by_id_and_course_id(req);
-    //   if (has_enrolled) {
-    //     return res.status(400).json({
-    //       message: MessageResponse.Error,
-    //       description: "You have already enrolled for this course!",
-    //       data: null,
-    //     });
-    //   }
-    //   const user_data = await userService.enroll_to_course(req);
-    //   if (!user_data) {
-    //     return res.status(404).json({
-    //       message: MessageResponse.Error,
-    //       description:
-    //         "User does not exist, could not enroll you please contact support!",
-    //       data: null,
-    //     });
-    //   }
-    //   return res.status(201).json({
-    //     message: MessageResponse.Success,
-    //     description: "You have successfully enrolled to this course!",
-    //     data: null,
-    //   });
-    // }
     fetched_enrolled_course_detail(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { course_id } = req.params;
@@ -65,7 +33,7 @@ class UserController {
                     data: null,
                 });
             }
-            return res.status(201).json({
+            return res.status(200).json({
                 message: enum_1.MessageResponse.Success,
                 description: "Courses fetched successfully!",
                 data: course_details,
