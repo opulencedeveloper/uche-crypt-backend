@@ -44,7 +44,7 @@ class PaymentController {
                 });
             }
             const transactionDetails = {
-                amount: course_exist.price,
+                amount: course_exist.price * 1000,
                 email: userData.email,
                 metadata: {
                     custom_fields: [

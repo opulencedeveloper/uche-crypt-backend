@@ -39,7 +39,7 @@ class PaymentController {
     }
 
     const transactionDetails = {
-      amount: course_exist.price,
+      amount: course_exist.price * 1000,
       email: userData.email,
       metadata: {
         custom_fields: [
@@ -49,7 +49,7 @@ class PaymentController {
         ],
       },
     };
-    
+
     const response = await axios.post(
       "https://api.paystack.co/transaction/initialize",
       transactionDetails,
