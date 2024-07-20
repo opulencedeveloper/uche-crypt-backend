@@ -5,47 +5,10 @@ import { userService } from "./service";
 import { allCoursesService } from "../all_course/service";
 
 class UserController {
-  // public async enroll_to_course(req: Request, res: Response) {
-  //   const course_exist = await allCoursesService.find_course_by_id(req);
-
-  //   if (!course_exist) {
-  //     return res.status(404).json({
-  //       message: MessageResponse.Error,
-  //       description: "Course not found!",
-  //       data: null,
-  //     });
-  //   }
-
-  //   const has_enrolled = await userService.find_user_by_id_and_course_id(req);
-
-  //   if (has_enrolled) {
-  //     return res.status(400).json({
-  //       message: MessageResponse.Error,
-  //       description: "You have already enrolled for this course!",
-  //       data: null,
-  //     });
-  //   }
-
-  //   const user_data = await userService.enroll_to_course(req);
-
-  //   if (!user_data) {
-  //     return res.status(404).json({
-  //       message: MessageResponse.Error,
-  //       description:
-  //         "User does not exist, could not enroll you please contact support!",
-  //       data: null,
-  //     });
-  //   }
-
-  //   return res.status(201).json({
-  //     message: MessageResponse.Success,
-  //     description: "You have successfully enrolled to this course!",
-  //     data: null,
-  //   });
-  // }
-
   public async fetched_enrolled_course_detail(req: Request, res: Response) {
-    const course_exist = await allCoursesService.find_course_by_id(req);
+    const { course_id } = req.params;
+
+    const course_exist = await allCoursesService.find_course_by_id(course_id);
 
     if (!course_exist) {
       return res.status(404).json({
@@ -90,77 +53,74 @@ class UserController {
     });
   }
 
-  // public async fetchUserData(req: Request, res: Response) {
-  //   const { user_id } = req as CustomRequest;
 
-  //   const userData = await userService.find_user_by_id(req);
+  public async mark_video_as_watched(req: Request, res: Response) {
+    const { course_id } = req.query;
 
-  //   if (!userData) {
+    const query_course_id = course_id as string;
+
+    const course_exist = await allCoursesService.find_course_by_id(query_course_id);
+
+    if (!course_exist) {
+      return res.status(404).json({
+        message: MessageResponse.Error,
+        description: "Course not found!",
+        data: null,
+      });
+    }
+
+    const has_marked = await userService.mark_video_as_watched(req);
+
+    if (!has_marked) {
+      return res.status(404).json({
+        message: MessageResponse.Error,
+        description: "This video does not exist!",
+        data: null,
+      });
+    }
+
+    return res.status(200).json({
+      message: MessageResponse.Success,
+      description: "Video has been marked as watched!",
+      data: null,
+    });
+  }
+
+    // public async enroll_to_course(req: Request, res: Response) {
+  //   const course_exist = await allCoursesService.find_course_by_id(req);
+
+  //   if (!course_exist) {
   //     return res.status(404).json({
   //       message: MessageResponse.Error,
-  //       description: "User does not exist",
+  //       description: "Course not found!",
   //       data: null,
   //     });
   //   }
 
-  //   return res.status(200).json({
-  //     message: MessageResponse.Error,
-  //     description: "User details retrived successfully!",
-  //     data: userData,
-  //   });
-  // }
+  //   const has_enrolled = await userService.find_user_by_id_and_course_id(req);
 
-  // public async updateUserData(req: Request, res: Response) {
-  //   const { userId } = req as CustomRequest;
-
-  //   const userExist = await userService.findUserById(userId);
-
-  //   if (!userExist) {
-  //     return res.status(404).json({
-  //       message: MessageResponse.Error,
-  //       description: "User does not exist",
-  //       data: null,
-  //     });
-  //   }
-
-  //   const updatedUserData = await userService.updateUserDataById(userId, req);
-
-  //   return res.status(201).json({
-  //     message: MessageResponse.Success,
-  //     description: "Your details is updated successfully!",
-  //     data: updatedUserData,
-  //   });
-  // }
-
-  // public async changeUserPassword(req: Request, res: Response) {
-  //   const { userId } = req as CustomRequest;
-  //   const { newPassword, oldPassword } = req.body;
-
-  //   const userExist = await userService.findUserByIdWithPassword(userId);
-
-  //   if (!userExist) {
-  //     return res.status(404).json({
-  //       message: MessageResponse.Error,
-  //       description: "User does not exist",
-  //       data: null,
-  //     });
-  //   }
-
-  //   const match = await comparePassword(oldPassword, userExist.password);
-
-  //   if (!match) {
+  //   if (has_enrolled) {
   //     return res.status(400).json({
   //       message: MessageResponse.Error,
-  //       description: "Invalid Password!",
+  //       description: "You have already enrolled for this course!",
   //       data: null,
   //     });
   //   }
 
-  //   await userService.updateUserPasswordById(userId, newPassword);
+  //   const user_data = await userService.enroll_to_course(req);
+
+  //   if (!user_data) {
+  //     return res.status(404).json({
+  //       message: MessageResponse.Error,
+  //       description:
+  //         "User does not exist, could not enroll you please contact support!",
+  //       data: null,
+  //     });
+  //   }
 
   //   return res.status(201).json({
   //     message: MessageResponse.Success,
-  //     description: "Your password is changed successfully!",
+  //     description: "You have successfully enrolled to this course!",
   //     data: null,
   //   });
   // }

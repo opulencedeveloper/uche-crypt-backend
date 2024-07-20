@@ -81,13 +81,10 @@ class AllCoursesService {
     return ads_courses_detail;
   }
 
-  public async find_course_by_id(req: Request) {
-    const { course_id } = req.params;
-
+  public async find_course_by_id(course_id: string) {
     const course = await AllCourse.findById(course_id);
 
-   return course;
-
+    return course;
   }
 }
 

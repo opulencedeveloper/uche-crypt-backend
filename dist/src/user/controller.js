@@ -48,7 +48,8 @@ class UserController {
     // }
     fetched_enrolled_course_detail(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const course_exist = yield service_2.allCoursesService.find_course_by_id(req);
+            const { course_id } = req.params;
+            const course_exist = yield service_2.allCoursesService.find_course_by_id(course_id);
             if (!course_exist) {
                 return res.status(404).json({
                     message: enum_1.MessageResponse.Error,
@@ -85,6 +86,33 @@ class UserController {
                 message: enum_1.MessageResponse.Success,
                 description: "Courses fetched successfully!",
                 data: userData,
+            });
+        });
+    }
+    mark_video_as_watched(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { course_id } = req.query;
+            const query_course_id = course_id;
+            const course_exist = yield service_2.allCoursesService.find_course_by_id(query_course_id);
+            if (!course_exist) {
+                return res.status(404).json({
+                    message: enum_1.MessageResponse.Error,
+                    description: "Course not found!",
+                    data: null,
+                });
+            }
+            const has_marked = yield service_1.userService.mark_video_as_watched(req);
+            if (!has_marked) {
+                return res.status(404).json({
+                    message: enum_1.MessageResponse.Error,
+                    description: "This video does not exist!",
+                    data: null,
+                });
+            }
+            return res.status(200).json({
+                message: enum_1.MessageResponse.Success,
+                description: "Video has been marked as watched!",
+                data: null,
             });
         });
     }

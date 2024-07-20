@@ -62,6 +62,39 @@ class UserService {
   //   return user;
   // }
 
+  public async mark_video_as_watched(req: Request) {
+    const { course_id, module_id } = req.query;
+    const { user_id } = req as CustomRequest;
+
+    const user = await User.findOneAndUpdate(
+      {
+        _id: user_id,
+        "enrolled_courses.course_id": course_id,
+        "enrolled_courses.enrolled_course_content.module_id": module_id,
+      },
+      {
+        // enrolled_courses: This is the array of courses that the user is enrolled in.
+        // $[course]: This is a positional operator that refers to the specific element in the enrolled_courses array that matches the filter criteria provided in the arrayFilters option. In this case, it represents the course object within the enrolled_courses array.
+        // enrolled_course_content: This is the nested array within each enrolled_course object, containing the modules of the course.
+        // $[module]: This is another positional operator that refers to the specific element in the enrolled_course_content array that matches the filter criteria provided in the arrayFilters option. It represents the module object within the enrolled_course_content array.
+        // watched:This is the field within each module that we want to update.
+        $set: {
+          "enrolled_courses.$[course].enrolled_course_content.$[module].watched":
+            true,
+        },
+      },
+      {
+        arrayFilters: [
+          { "course.course_id": course_id },
+          { "module.module_id": module_id },
+        ],
+        new: true, // Return the modified document
+      }
+    );
+
+    return user;
+  }
+
   public async fetch_enrolled_courses_detail(req: Request) {
     const { course_id } = req.params;
 
@@ -129,7 +162,6 @@ class UserService {
   }
 
   public async check_enrollement_status(user_id: string, course_id: string) {
-
     const user = await User.findOne({
       _id: user_id,
       "enrolled_courses.paid": true,

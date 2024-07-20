@@ -25,20 +25,8 @@ UserRouter.get(
   wrapAsync(userController.fetched_enrolled_course_detail)
 );
 
-// UserRouter.get(
-//   "/user-profile",
-//   [isAuth],
-//   wrapAsync(userController.fetchUserData)
-// );
-
-// UserRouter.patch(
-//   "/update-user-profile",
-//   [isAuth, userValidator.updateUserData],
-//   wrapAsync(userController.updateUserData)
-// );
-
-// UserRouter.patch(
-//   "/change-user-password",
-//   [isAuth, userValidator.changeUserPassword],
-//   wrapAsync(userController.changeUserPassword)
-// );
+UserRouter.patch(
+  "/mark/watched",
+  [isAuth, userValidator.mark_video_as_watched],
+  wrapAsync(userController.mark_video_as_watched)
+);

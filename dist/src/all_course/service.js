@@ -77,9 +77,8 @@ class AllCoursesService {
             return ads_courses_detail;
         });
     }
-    find_course_by_id(req) {
+    find_course_by_id(course_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { course_id } = req.params;
             const course = yield entity_1.default.findById(course_id);
             return course;
         });

@@ -45,5 +45,44 @@ class UserValidator {
             }
         });
     }
+    mark_video_as_watched(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const schema = joi_1.default.object({
+                course_id: joi_1.default.string().custom((value, helpers) => {
+                    if (!mongoose_1.default.Types.ObjectId.isValid(value)) {
+                        return helpers.message({
+                            custom: "Course ID must be a valid ObjectId",
+                        });
+                    }
+                    return value;
+                }).required().messages({
+                    'string.base': 'Course ID must be a string',
+                    'any.required': 'Course ID is required',
+                }),
+                module_id: joi_1.default.string().custom((value, helpers) => {
+                    if (!mongoose_1.default.Types.ObjectId.isValid(value)) {
+                        return helpers.message({
+                            custom: "Module ID must be a valid ObjectId",
+                        });
+                    }
+                    return value;
+                }).required().messages({
+                    'string.base': 'Module ID must be a string',
+                    'any.required': 'Module ID is required',
+                }),
+            });
+            const { error } = schema.validate(req.query);
+            if (!error) {
+                return next();
+            }
+            else {
+                return res.status(400).json({
+                    message: enum_1.MessageResponse.Error,
+                    description: error.details[0].message,
+                    data: null,
+                });
+            }
+        });
+    }
 }
 exports.userValidator = new UserValidator();

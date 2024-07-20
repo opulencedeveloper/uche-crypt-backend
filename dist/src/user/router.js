@@ -14,18 +14,4 @@ exports.UserRouter = (0, express_1.Router)();
 // );
 exports.UserRouter.get("/user/course/enrolled", [is_auth_1.isAuth], (0, utils_1.wrapAsync)(controller_1.userController.fetched_all_enrolled_courses));
 exports.UserRouter.get("/user/course/enrolled/:course_id", [is_auth_1.isAuth, validator_1.userValidator.enrolled_to_course], (0, utils_1.wrapAsync)(controller_1.userController.fetched_enrolled_course_detail));
-// UserRouter.get(
-//   "/user-profile",
-//   [isAuth],
-//   wrapAsync(userController.fetchUserData)
-// );
-// UserRouter.patch(
-//   "/update-user-profile",
-//   [isAuth, userValidator.updateUserData],
-//   wrapAsync(userController.updateUserData)
-// );
-// UserRouter.patch(
-//   "/change-user-password",
-//   [isAuth, userValidator.changeUserPassword],
-//   wrapAsync(userController.changeUserPassword)
-// );
+exports.UserRouter.patch("/mark/watched", [is_auth_1.isAuth, validator_1.userValidator.mark_video_as_watched], (0, utils_1.wrapAsync)(controller_1.userController.mark_video_as_watched));

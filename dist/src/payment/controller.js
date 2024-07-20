@@ -15,27 +15,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.paymentController = void 0;
 const axios_1 = __importDefault(require("axios"));
 const crypto_1 = __importDefault(require("crypto"));
+const dotenv_1 = __importDefault(require("dotenv"));
 const enum_1 = require("../utils/enum");
 const service_1 = require("../all_course/service");
 const service_2 = require("../user/service");
 const service_3 = require("./service");
+dotenv_1.default.config();
+const secret_key = process.env.PAYSTACK_SECRET_KEY || "";
 class PaymentController {
     pay(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { user_id } = req;
-            const course_exist = yield service_1.allCoursesService.find_course_by_id(req);
+            const { course_id } = req.params;
+            const course_exist = yield service_1.allCoursesService.find_course_by_id(course_id);
             const userData = yield service_2.userService.find_user_by_id(user_id);
             if (!course_exist || !userData) {
                 return res.status(404).json({
                     message: enum_1.MessageResponse.Error,
-                    description: !course_exist
-                        ? "Course not found!"
-                        : "User does not exist!",
+                    description: !course_exist ? "Course not found!" : "User does not exist!",
                     data: null,
                 });
             }
-            const course_id = course_exist._id;
-            const has_enrolled = yield service_2.userService.check_enrollement_status(user_id, course_id);
+            const retrived_course_id = course_exist._id;
+            const has_enrolled = yield service_2.userService.check_enrollement_status(user_id, retrived_course_id);
             if (has_enrolled) {
                 return res.status(400).json({
                     message: enum_1.MessageResponse.Error,
@@ -57,11 +59,11 @@ class PaymentController {
             };
             const response = yield axios_1.default.post("https://api.paystack.co/transaction/initialize", transactionDetails, {
                 headers: {
-                    Authorization: `Bearer sk_test_166f55da8659798259ecba885f1137cf3b13d0e7`,
+                    Authorization: `Bearer ${secret_key}`,
                 },
             });
             const payment_reference_id = response.data.data.reference;
-            const user = yield service_3.paymentService.start_enrollment_to_course(user_id, course_id, payment_reference_id);
+            const user = yield service_3.paymentService.start_enrollment_to_course(user_id, retrived_course_id, payment_reference_id);
             if (!user) {
                 return res.status(404).json({
                     message: enum_1.MessageResponse.Error,
@@ -73,21 +75,19 @@ class PaymentController {
                 message: enum_1.MessageResponse.Success,
                 description: "Sucess!",
                 data: {
-                    price: converted_to_kobo,
+                    // price: converted_to_kobo,
                     authorization_url: response.data.data.authorization_url,
-                    reference: response.data.data.reference,
+                    //  reference: response.data.data.reference,
                 },
             });
         });
     }
     verify_payment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const secret = "sk_test_166f55da8659798259ecba885f1137cf3b13d0e7";
-            const hash = crypto_1.default.createHmac('sha512', secret).update(JSON.stringify(req.body)).digest('hex');
+            const hash = crypto_1.default.createHmac('sha512', secret_key).update(JSON.stringify(req.body)).digest('hex');
             if (hash == req.headers['x-paystack-signature']) {
                 const event = req.body;
                 if (event.event === "charge.success") {
-                    console.log("payyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyysttttttttttttttttttttttack", event);
                     yield service_3.paymentService.enroll_to_course(event.data.reference);
                 }
             }
