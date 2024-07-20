@@ -11,7 +11,9 @@ interface IEnrolledCourseContent {
 
 export interface IEnrolledCourses {
   course_id: string;
-  enrolled_course_content: IEnrolledCourseContent[];
+  paid: boolean,
+  payment_reference_id: string,
+  enrolled_course_content?: IEnrolledCourseContent[];
 }
 
 export interface IUser extends Document {

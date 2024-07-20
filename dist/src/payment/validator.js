@@ -12,12 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userValidator = void 0;
+exports.paymentValidator = void 0;
 const joi_1 = __importDefault(require("joi"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const enum_1 = require("../utils/enum");
-class UserValidator {
-    enrolled_to_course(req, res, next) {
+class PaymentValidator {
+    payment(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const schema = joi_1.default.object({
                 course_id: joi_1.default.string().custom((value, helpers) => {
@@ -46,4 +46,4 @@ class UserValidator {
         });
     }
 }
-exports.userValidator = new UserValidator();
+exports.paymentValidator = new PaymentValidator();

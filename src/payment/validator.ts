@@ -4,8 +4,8 @@ import mongoose from "mongoose";
 
 import { MessageResponse } from "../utils/enum";
 
-class UserValidator {
-  public async enrolled_to_course(
+class PaymentValidator {
+  public async payment(
     req: Request,
     res: Response,
     next: NextFunction
@@ -38,4 +38,4 @@ class UserValidator {
  
 }
 
-export const userValidator = new UserValidator();
+export const paymentValidator = new PaymentValidator();

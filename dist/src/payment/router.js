@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PaymentRouter = void 0;
+const express_1 = require("express");
+const controller_1 = require("./controller");
+const utils_1 = require("../utils");
+const is_auth_1 = require("../middleware/is_auth");
+const validator_1 = require("./validator");
+exports.PaymentRouter = (0, express_1.Router)();
+exports.PaymentRouter.post("/pay/:course_id", [is_auth_1.isAuth, validator_1.paymentValidator.payment], (0, utils_1.wrapAsync)(controller_1.paymentController.pay));
+exports.PaymentRouter.post("/uchecrypt/webhook", (0, utils_1.wrapAsync)(controller_1.paymentController.verify_payment));

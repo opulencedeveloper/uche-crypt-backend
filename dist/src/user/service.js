@@ -25,18 +25,21 @@ class UserService {
             return user;
         });
     }
-    find_user_by_id(req) {
+    find_user_by_id(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.body;
             const user = yield entity_1.default.findById(id);
             return user;
         });
     }
-    enroll_to_course(req) {
+    enroll_to_course(user_id, course_id, payment_reference_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { user_id } = req;
-            const { course_id } = req.params;
-            let user = yield entity_1.default.findById(user_id).select("enrolled_courses");
+            // const { user_id } = req as CustomRequest;
+            // const { course_id } = req.params;
+            let user = yield entity_1.default.findOne({
+                _id: user_id,
+                "enrolled_courses.payment_reference_id": payment_reference_id,
+            }).select("enrolled_courses");
+            yield entity_1.default.findById(user_id).select("enrolled_courses");
             const course = yield entity_2.default.findById(course_id);
             if (!user || !course)
                 return;
@@ -46,6 +49,8 @@ class UserService {
             })));
             const newEnrolledCourse = {
                 course_id: course_id,
+                paid: true,
+                payment_reference_id: payment_reference_id,
                 enrolled_course_content: enrolledCourse,
             };
             user.enrolled_courses.push(newEnrolledCourse);
@@ -62,11 +67,12 @@ class UserService {
             const user = yield entity_1.default.findOne({
                 _id: user_id,
                 "enrolled_courses.course_id": course_id,
+                "enrolled_courses.paid": true,
             });
             if (!user || !course)
                 return;
             const enrolledCourse = user.enrolled_courses.find((ec) => ec.course_id === course_id);
-            if (!enrolledCourse)
+            if (!enrolledCourse || enrolledCourse.enrolled_course_content === undefined)
                 return;
             const existingContentMap = new Map();
             for (const content of enrolledCourse.enrolled_course_content) {
@@ -103,12 +109,11 @@ class UserService {
             return retrieved_enrolled_courses;
         });
     }
-    find_user_by_id_and_course_id(req) {
+    check_enrollement_status(user_id, course_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { user_id } = req;
-            const { course_id } = req.params;
             const user = yield entity_1.default.findOne({
                 _id: user_id,
+                "enrolled_courses.paid": true,
                 "enrolled_courses.course_id": course_id,
             });
             return user;

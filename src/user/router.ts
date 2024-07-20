@@ -7,22 +7,11 @@ import { userValidator } from "./validator";
 
 export const UserRouter = Router();
 
-UserRouter.post(
-  "/user/course/enroll/:course_id",
-  [isAuth, userValidator.enroll_to_course],
-  wrapAsync(userController.enroll_to_course)
-);
-
-UserRouter.post(
-  "/pay",
-  [isAuth],
-  wrapAsync(userController.pay)
-);
-
-UserRouter.post(
-  "/uchecrypt/webhook",
-  wrapAsync(userController.verify_payment)
-);
+// UserRouter.post(
+//   "/user/course/enroll/:course_id",
+//   [isAuth, userValidator.enroll_to_course],
+//   wrapAsync(userController.enroll_to_course)
+// );
 
 UserRouter.get(
   "/user/course/enrolled",
@@ -32,7 +21,7 @@ UserRouter.get(
 
 UserRouter.get(
   "/user/course/enrolled/:course_id",
-  [isAuth, userValidator.enroll_to_course],
+  [isAuth, userValidator.enrolled_to_course],
   wrapAsync(userController.fetched_enrolled_course_detail)
 );
 

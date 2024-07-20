@@ -14,9 +14,10 @@ const router_2 = require("./src/user/router");
 const router_3 = require("./src/all_course/router");
 const router_4 = require("./src/youtube_courses/router");
 const router_5 = require("./src/news_letter/router");
+const router_6 = require("./src/payment/router");
 const app = (0, express_1.default)();
 dotenv_1.default.config();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8081;
 const StartServer = () => {
     app.use((req, res, next) => {
         loggin_1.default.info(`Incoming ==> Method : [${req.method}] - IP: [${req.socket.remoteAddress}]`);
@@ -34,7 +35,7 @@ const StartServer = () => {
         credentials: true,
     }));
     // Routes
-    app.use("/api/v1", router_1.AuthRouter, router_2.UserRouter, router_3.AllCoursesRouter, router_4.YoutubeCoursesRouter, router_5.NewsLetterRouter);
+    app.use("/api/v1", router_1.AuthRouter, router_2.UserRouter, router_3.AllCoursesRouter, router_4.YoutubeCoursesRouter, router_5.NewsLetterRouter, router_6.PaymentRouter);
     // Health check
     app.get("/api/v1/healthcheck", (_req, res) => {
         res.status(200).json({ status: "UP 🔥🔧🎂" });

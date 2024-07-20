@@ -11,12 +11,13 @@ import { UserRouter } from "./src/user/router";
 import { AllCoursesRouter } from "./src/all_course/router";
 import { YoutubeCoursesRouter } from "./src/youtube_courses/router";
 import { NewsLetterRouter } from "./src/news_letter/router";
+import { PaymentRouter } from "./src/payment/router";
 
 const app: Express = express();
 
 dotenv.config();
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8081;
 
 const StartServer = () => {
   app.use((req: Request, res: Response, next: NextFunction) => {
@@ -53,7 +54,8 @@ const StartServer = () => {
     UserRouter,
     AllCoursesRouter,
     YoutubeCoursesRouter,
-    NewsLetterRouter
+    NewsLetterRouter,
+    PaymentRouter
   );
 
   // Health check

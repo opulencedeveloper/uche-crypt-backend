@@ -37,6 +37,13 @@ const enrolledCoursesSchema = new mongoose_1.Schema({
     course_id: {
         type: String,
     },
+    paid: {
+        type: Boolean,
+        default: false,
+    },
+    payment_reference_id: {
+        type: String
+    },
     enrolled_course_content: [enrolledCourseContentSchema],
 });
 const userSchema = new mongoose_1.Schema({

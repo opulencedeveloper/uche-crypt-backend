@@ -17,6 +17,13 @@ const enrolledCoursesSchema: Schema = new Schema({
   course_id: {
     type: String,
   },
+  paid: {
+    type: Boolean,
+    default: false,
+  },
+  payment_reference_id: {
+    type: String
+  },
   enrolled_course_content: [enrolledCourseContentSchema],
 });
 
