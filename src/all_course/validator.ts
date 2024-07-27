@@ -65,10 +65,15 @@ class AllCoursesValidator {
               "string.base": "Course content title must be text",
               "any.required": "Course content title is required.",
             }),
+            
             modules: Joi.array()
               .items(
                 Joi.object({
                   video_url: videoUrlValidation,
+                  description: Joi.string().required().messages({
+                    "string.base": "Course module description must be text",
+                    "any.required": "Course module description is required.",
+                  }),
                   title: Joi.string().required().messages({
                     "string.base": "Module title must be text",
                     "any.required": "Module title is required.",
@@ -104,7 +109,6 @@ class AllCoursesValidator {
 }
 
 export const allCoursesValidator = new AllCoursesValidator();
-
 
 // import Joi from "joi";
 // import { Request, Response, NextFunction } from "express";

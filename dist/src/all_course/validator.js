@@ -74,6 +74,10 @@ class AllCoursesValidator {
                     modules: joi_1.default.array()
                         .items(joi_1.default.object({
                         video_url: videoUrlValidation,
+                        description: joi_1.default.string().required().messages({
+                            "string.base": "Course module description must be text",
+                            "any.required": "Course module description is required.",
+                        }),
                         title: joi_1.default.string().required().messages({
                             "string.base": "Module title must be text",
                             "any.required": "Module title is required.",

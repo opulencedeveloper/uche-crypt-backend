@@ -7,12 +7,12 @@ import { allCoursesValidator } from "./validator";
 
 export const AllCoursesRouter = Router();
 
-AllCoursesRouter.post(
-  "/admin/courses",
-  [ isAuth,
-     allCoursesValidator.uploadCourse],
-  wrapAsync(allCoursesController.uploadCourse)
-);
+// AllCoursesRouter.post(
+//   "/admin/courses",
+//   [ isAuth,
+//      allCoursesValidator.uploadCourse],
+//   wrapAsync(allCoursesController.uploadCourse)
+// );
 
 AllCoursesRouter.get(
   "/courses",
