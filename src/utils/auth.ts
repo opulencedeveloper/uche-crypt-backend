@@ -93,6 +93,8 @@ export const send_verification_email = async (input: IOTP) => {
 };
 
 export const send_reset_password_email = async (input: IOTP) => {
+  const clientUrl = process.env.CLIENT_URL;
+
   return sendEmail({
     receiverEmail: input.email,
     subject: "RESET PASSWORD OTP",
@@ -106,8 +108,9 @@ export const send_reset_password_email = async (input: IOTP) => {
           <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
             
               <div style="text-align: left; color: #555555; font-size: 16px; line-height: 1.6; margin-top: 20px;">
-                  <p>Your reset password otp code is</p>
-                  <p>${input.otp}</p>
+                  <p>Your reset password url</p>
+                  <p></p>
+                  <a href="${clientUrl}/reset-password?email=${input.email}&token=${input.otp}">Click here</a>
                  
                   <p>If you have any questions or concerns, feel free to contact us.</p>
                   <p>Thank you for choosing us!</p>
