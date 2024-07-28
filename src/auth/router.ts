@@ -19,6 +19,12 @@ AuthRouter.post(
 );
 
 AuthRouter.post(
+  "/resend/email/verification/otp",
+  [authValidator.validate_email],
+  wrapAsync(authController.resend_email_vertfication_otp)
+);
+
+AuthRouter.post(
   "/signin",
   [authValidator.sign_in],
   wrapAsync(authController.sign_in)

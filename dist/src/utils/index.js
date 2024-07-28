@@ -18,6 +18,6 @@ const slugify = (input) => {
 };
 exports.slugify = slugify;
 const generate_otp = () => {
-    return Array.from({ length: 5 }, () => crypto_1.default.randomInt(0, 10)).join('');
+    return Array.from({ length: 4 }, () => crypto_1.default.randomInt(0, 10)).join('');
 };
 exports.generate_otp = generate_otp;

@@ -101,6 +101,27 @@ class AuthController {
             }
         });
     }
+    resend_email_vertfication_otp(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield service_1.userService.findUserByEmail(req);
+            if (!user) {
+                return res.status(404).json({
+                    message: enum_1.MessageResponse.Error,
+                    description: "User does not exist!",
+                    data: null,
+                });
+            }
+            const email = user.email;
+            const otp = (0, utils_1.generate_otp)();
+            yield service_2.authService.save_otp({ email, otp });
+            yield (0, auth_2.send_verification_email)({ email, otp });
+            return res.status(201).json({
+                message: enum_1.MessageResponse.Success,
+                description: "Verification token resent!",
+                data: null,
+            });
+        });
+    }
     sign_in(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { password, email } = req.body;

@@ -115,6 +115,32 @@ class AuthController {
     }
   }
 
+  public async resend_email_vertfication_otp(req: Request, res: Response) {
+    const user = await userService.findUserByEmail(req);
+
+    if(!user) {
+      return res.status(404).json({
+        message: MessageResponse.Error,
+        description: "User does not exist!",
+        data: null,
+      });
+    }
+
+    const email = user.email;
+
+    const otp = generate_otp();
+
+    await authService.save_otp({ email, otp });
+
+    await send_verification_email({ email, otp });
+
+    return res.status(201).json({
+      message: MessageResponse.Success,
+      description: "Verification token resent!",
+      data: null,
+    });
+  }
+
   public async sign_in(req: Request, res: Response) {
     const { password, email } = req.body;
 

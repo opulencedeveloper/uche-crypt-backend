@@ -14,6 +14,6 @@ export const slugify = (input: string): string => {
 };
 
 export const generate_otp = (): string  => {
-  return Array.from({ length: 5 }, () => Crypto.randomInt(0, 10)).join('');
+  return Array.from({ length: 4 }, () => Crypto.randomInt(0, 10)).join('');
 }
 
