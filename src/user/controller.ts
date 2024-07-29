@@ -20,7 +20,7 @@ class UserController {
     }
 
     return res.status(200).json({
-      message: MessageResponse.Error,
+      message: MessageResponse.Success,
       description: "User details fetched successfully!",
       data: {
         email: user_exist.email,

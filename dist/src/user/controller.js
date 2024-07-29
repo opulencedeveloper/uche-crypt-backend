@@ -26,7 +26,7 @@ class UserController {
                 });
             }
             return res.status(200).json({
-                message: enum_1.MessageResponse.Error,
+                message: enum_1.MessageResponse.Success,
                 description: "User details fetched successfully!",
                 data: {
                     email: user_exist.email,
