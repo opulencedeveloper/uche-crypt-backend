@@ -14,6 +14,26 @@ const enum_1 = require("../utils/enum");
 const service_1 = require("./service");
 const service_2 = require("../all_course/service");
 class UserController {
+    fetch_user_details(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { user_id } = req;
+            const user_exist = yield service_1.userService.find_user_by_id(user_id);
+            if (!user_exist) {
+                return res.status(404).json({
+                    message: enum_1.MessageResponse.Error,
+                    description: "User does not exist!",
+                    data: null,
+                });
+            }
+            return res.status(200).json({
+                message: enum_1.MessageResponse.Error,
+                description: "User details fetched successfully!",
+                data: {
+                    email: user_exist.email,
+                },
+            });
+        });
+    }
     fetched_enrolled_course_detail(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { course_id } = req.params;
@@ -86,3 +106,12 @@ class UserController {
     }
 }
 exports.userController = new UserController();
+// public async fetch_user_details(req: Request, res: Response) {
+//   return res.status(200).json({
+//     message: MessageResponse.success,
+//     description: "User details fetched successfully".
+//     data: {
+//       email: user_exist.email
+//     }
+//   })
+// }

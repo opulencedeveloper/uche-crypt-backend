@@ -3,8 +3,31 @@ import { Request, Response } from "express";
 import { MessageResponse } from "../utils/enum";
 import { userService } from "./service";
 import { allCoursesService } from "../all_course/service";
+import { CustomRequest } from "../utils/interface";
 
 class UserController {
+  public async fetch_user_details(req: Request, res: Response) {
+    const { user_id } = req as CustomRequest;
+
+    const user_exist = await userService.find_user_by_id(user_id);
+
+    if (!user_exist) {
+      return res.status(404).json({
+        message: MessageResponse.Error,
+        description: "User does not exist!",
+        data: null,
+      });
+    }
+
+    return res.status(200).json({
+      message: MessageResponse.Error,
+      description: "User details fetched successfully!",
+      data: {
+        email: user_exist.email,
+      },
+    });
+  }
+
   public async fetched_enrolled_course_detail(req: Request, res: Response) {
     const { course_id } = req.params;
 
@@ -53,13 +76,14 @@ class UserController {
     });
   }
 
-
   public async mark_video_as_watched(req: Request, res: Response) {
     const { course_id } = req.query;
 
     const query_course_id = course_id as string;
 
-    const course_exist = await allCoursesService.find_course_by_id(query_course_id);
+    const course_exist = await allCoursesService.find_course_by_id(
+      query_course_id
+    );
 
     if (!course_exist) {
       return res.status(404).json({
@@ -86,7 +110,7 @@ class UserController {
     });
   }
 
-    // public async enroll_to_course(req: Request, res: Response) {
+  // public async enroll_to_course(req: Request, res: Response) {
   //   const course_exist = await allCoursesService.find_course_by_id(req);
 
   //   if (!course_exist) {
@@ -127,3 +151,14 @@ class UserController {
 }
 
 export const userController = new UserController();
+
+// public async fetch_user_details(req: Request, res: Response) {
+
+//   return res.status(200).json({
+//     message: MessageResponse.success,
+//     description: "User details fetched successfully".
+//     data: {
+//       email: user_exist.email
+//     }
+//   })
+// }

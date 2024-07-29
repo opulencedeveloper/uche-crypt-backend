@@ -14,6 +14,12 @@ export const UserRouter = Router();
 // );
 
 UserRouter.get(
+  "/user",
+  [isAuth],
+  wrapAsync(userController.fetch_user_details)
+);
+
+UserRouter.get(
   "/user/course/enrolled",
   [isAuth],
   wrapAsync(userController.fetched_all_enrolled_courses)

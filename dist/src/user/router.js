@@ -12,6 +12,7 @@ exports.UserRouter = (0, express_1.Router)();
 //   [isAuth, userValidator.enroll_to_course],
 //   wrapAsync(userController.enroll_to_course)
 // );
+exports.UserRouter.get("/user", [is_auth_1.isAuth], (0, utils_1.wrapAsync)(controller_1.userController.fetch_user_details));
 exports.UserRouter.get("/user/course/enrolled", [is_auth_1.isAuth], (0, utils_1.wrapAsync)(controller_1.userController.fetched_all_enrolled_courses));
 exports.UserRouter.get("/user/course/enrolled/:course_id", [is_auth_1.isAuth, validator_1.userValidator.enrolled_to_course], (0, utils_1.wrapAsync)(controller_1.userController.fetched_enrolled_course_detail));
 exports.UserRouter.patch("/mark/watched", [is_auth_1.isAuth, validator_1.userValidator.mark_video_as_watched], (0, utils_1.wrapAsync)(controller_1.userController.mark_video_as_watched));
