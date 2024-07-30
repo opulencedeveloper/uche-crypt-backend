@@ -54,7 +54,10 @@ class UserController {
     return res.status(200).json({
       message: MessageResponse.Success,
       description: "Courses fetched successfully!",
-      data: course_details,
+      data: {
+        course_title: course_exist.title,
+        course_details,
+      },
     });
   }
 
