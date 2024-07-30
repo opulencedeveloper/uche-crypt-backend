@@ -70,7 +70,7 @@ class AllCoursesService {
           slashed_price: 1,
           details: 1,
           introduction: 1,
-          // "course_content.title": 1,
+          "course_content.title": 1,
           "course_content.modules.title": 1,
           "course_content.modules.description": 1,
           // "course_content.modules.video_url": 1,
