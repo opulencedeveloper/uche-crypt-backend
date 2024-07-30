@@ -46,10 +46,12 @@ class PaymentController {
     }
 
     const converted_to_kobo = course_exist.price * 100;
+    const clientUrl = process.env.CLIENT_URL;
 
     const transactionDetails = {
       amount: converted_to_kobo,
       email: userData.email,
+      callback_url: `${clientUrl}/my-learning`,
       metadata: {
         custom_fields: [
           {
