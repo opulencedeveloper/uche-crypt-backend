@@ -42,7 +42,7 @@ const StartServer = () => {
   // Cors
   app.use(
     cors({
-      origin: ["http://127.0.0.1:5500"],
+      origin: ["http://127.0.0.1:5500", "http://localhost:3000", "https://uche-crypt.vercel.app"],
       credentials: true,
     })
   );
