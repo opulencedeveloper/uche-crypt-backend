@@ -16,6 +16,27 @@ exports.authValidator = void 0;
 const joi_1 = __importDefault(require("joi"));
 const enum_1 = require("../utils/enum");
 class AuthValidator {
+    google_signin(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const schema = joi_1.default.object({
+                code: joi_1.default.string().required().messages({
+                    "any.required": "Code is required",
+                }),
+            });
+            const { error } = schema.validate(req.query);
+            if (!error) {
+                return next();
+            }
+            else {
+                console.log(error);
+                return res.status(400).json({
+                    message: enum_1.MessageResponse.Error,
+                    description: error.details[0].message,
+                    data: null,
+                });
+            }
+        });
+    }
     sign_up(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const schema = joi_1.default.object({

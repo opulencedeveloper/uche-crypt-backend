@@ -4,11 +4,27 @@ import { Request, Response, NextFunction } from "express";
 import { MessageResponse } from "../utils/enum";
 
 class AuthValidator {
-  public async sign_up(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  public async google_signin(req: Request, res: Response, next: NextFunction) {
+    const schema = Joi.object({
+      code: Joi.string().required().messages({
+        "any.required": "Code is required",
+      }),
+    });
+    const { error } = schema.validate(req.query);
+
+    if (!error) {
+      return next();
+    } else {
+      console.log(error);
+      return res.status(400).json({
+        message: MessageResponse.Error,
+        description: error.details[0].message,
+        data: null,
+      });
+    }
+  }
+
+  public async sign_up(req: Request, res: Response, next: NextFunction) {
     const schema = Joi.object({
       email: Joi.string().email().required().messages({
         "string.email": "Please enter a valid email address",
@@ -46,7 +62,11 @@ class AuthValidator {
     }
   }
 
-    public async email_verify_otp(req: Request, res: Response, next: NextFunction) {
+  public async email_verify_otp(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     const schema = Joi.object({
       email: Joi.string().email().required().messages({
         "string.base": "Email must be text",
@@ -93,7 +113,6 @@ class AuthValidator {
     }
   }
 
-
   public async validate_email(req: Request, res: Response, next: NextFunction) {
     const schema = Joi.object({
       email: Joi.string().email().required().messages({
@@ -102,7 +121,7 @@ class AuthValidator {
         "any.required": "Email is required.",
       }),
     });
-    
+
     const { error } = schema.validate(req.body);
 
     if (!error) {
@@ -116,8 +135,7 @@ class AuthValidator {
     }
   }
 
-
-   public async forgot_password_change(
+  public async forgot_password_change(
     req: Request,
     res: Response,
     next: NextFunction
@@ -198,8 +216,6 @@ class AuthValidator {
   //     });
   //   }
   // }
-
- 
 }
 
 export const authValidator = new AuthValidator();

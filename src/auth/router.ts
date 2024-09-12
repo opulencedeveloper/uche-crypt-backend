@@ -6,6 +6,18 @@ import { authValidator } from "./validator";
 
 export const AuthRouter = Router();
 
+AuthRouter.get(
+  "/auth/google",
+  wrapAsync(authController.generate_google_auth_url)
+);
+
+AuthRouter.post(
+  "/google/signin",
+  [authValidator.google_signin],
+  wrapAsync(authController.google_sign_in)
+);
+
+
 AuthRouter.post(
   "/signup",
   [authValidator.sign_up],

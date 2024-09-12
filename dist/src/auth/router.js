@@ -6,6 +6,8 @@ const controller_1 = require("./controller");
 const utils_1 = require("../utils");
 const validator_1 = require("./validator");
 exports.AuthRouter = (0, express_1.Router)();
+exports.AuthRouter.get("/auth/google", (0, utils_1.wrapAsync)(controller_1.authController.generate_google_auth_url));
+exports.AuthRouter.post("/google/signin", [validator_1.authValidator.google_signin], (0, utils_1.wrapAsync)(controller_1.authController.google_sign_in));
 exports.AuthRouter.post("/signup", [validator_1.authValidator.sign_up], (0, utils_1.wrapAsync)(controller_1.authController.sign_up));
 exports.AuthRouter.post("/verify/email", [validator_1.authValidator.email_verify_otp], (0, utils_1.wrapAsync)(controller_1.authController.email_verify_otp));
 exports.AuthRouter.post("/resend/email/verification/otp", [validator_1.authValidator.validate_email], (0, utils_1.wrapAsync)(controller_1.authController.resend_email_vertfication_otp));

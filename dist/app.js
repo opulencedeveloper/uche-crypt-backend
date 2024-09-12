@@ -31,7 +31,7 @@ const StartServer = () => {
     app.use(express_1.default.urlencoded({ extended: true }));
     // Cors
     app.use((0, cors_1.default)({
-        origin: "*",
+        origin: ["http://127.0.0.1:5500"],
         credentials: true,
     }));
     // Routes

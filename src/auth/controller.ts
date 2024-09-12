@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import Crypto from "crypto";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { OAuth2Client } from "google-auth-library";
 
 import { comparePassword } from "../utils/auth";
 import { generate_otp } from "../utils";
@@ -16,9 +16,134 @@ import { IVerifiedEmail } from "./interface";
 
 dotenv.config();
 
+const GOOGLE_AUTH_CLIENT_ID = process.env.GOOGLE_AUTH_CLIENT_ID;
+const GOOGLE_AUTH_CLIENT_SECRET = process.env.GOOGLE_AUTH_CLIENT_SECRET;
+const GOOGLE_AUTH_REDIRECT_URL = process.env.GOOGLE_AUTH_REDIRECT_URL;
+const redirectUrl = GOOGLE_AUTH_REDIRECT_URL;
+
+interface GoogleUserInfo {
+  email: string;
+  name: string;
+  picture: string;
+  sub: string; // The Google user's unique ID
+  // Add more fields if needed from Google's response
+}
+
 class AuthController {
+  public async generate_google_auth_url(req: Request, res: Response) {
+    const client = new OAuth2Client(
+      GOOGLE_AUTH_CLIENT_ID,
+      GOOGLE_AUTH_CLIENT_SECRET,
+      redirectUrl
+    );
+
+    const authorizeUrl = client.generateAuthUrl({
+      access_type: "offline",
+      scope: [
+        "https://www.googleapis.com/auth/userinfo.profile",
+        "https://www.googleapis.com/auth/userinfo.email",
+      ],
+      prompt: "consent",
+    });
+
+    return res.status(200).json({
+      message: MessageResponse.Success,
+      description: "Auth Url generated successfully",
+      data: { authorizeUrl },
+    });
+  }
+
+  public async google_sign_in(req: Request, res: Response) {
+    const { code } = req.query;
+    const retrived_code = code as string;
+
+    const client = new OAuth2Client(
+      GOOGLE_AUTH_CLIENT_ID,
+      GOOGLE_AUTH_CLIENT_SECRET,
+      redirectUrl
+    );
+
+    // Exchange authorization code for tokens
+    const responseInfo = await client.getToken(retrived_code);
+    await client.setCredentials(responseInfo.tokens);
+
+    const access_token = responseInfo.tokens.access_token;
+
+    if (!access_token) {
+      return res.status(404).json({
+        message: MessageResponse.Error,
+        description: "Access token not found",
+        data: null,
+      });
+    }
+
+    // Fetch the user info using the access token
+    const response = await fetch(
+      `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`
+    );
+    const data: GoogleUserInfo = await response.json();
+
+    const email = data.email;
+
+    if (!email) {
+      return res.status(404).json({
+        message: MessageResponse.Error,
+        description: "User email not found!",
+        data: null,
+      });
+    }
+
+    const user_exists = await userService.findUserByEmail(email);
+
+    if (!user_exists) {
+      return res.status(404).json({
+        message: MessageResponse.Error,
+        description: "Email does not exist!",
+        data: null,
+      });
+    }
+
+    const is_email_verified = await authService.check_email_verification_status(
+      user_exists.email
+    );
+
+    if (!is_email_verified) {
+      const verifyEmail: IVerifiedEmail = {
+        email: user_exists.email,
+      };
+
+      const email_verified = await authService.verify_email(verifyEmail);
+
+      if (!email_verified) {
+        return res.status(404).json({
+          message: MessageResponse.Error,
+          description: "User not found!",
+          data: null,
+        });
+      }
+    }
+
+    const token = jwt.sign(
+      { userId: user_exists._id },
+      process.env.JWT_SECRET!,
+      {
+        expiresIn: process.env.TOKEN_EXPIRY,
+      }
+    );
+
+    return res.status(200).json({
+      message: MessageResponse.Success,
+      description: "Logged in successfully",
+      data: {
+        token,
+      },
+    });
+  }
+
   public async sign_up(req: Request, res: Response) {
-    const userExists = await userService.findUserByEmail(req);
+    const { email: retrivedEmail } = req.body;
+
+    const userExists = await userService.findUserByEmail(retrivedEmail);
 
     if (userExists) {
       return res.status(400).json({
@@ -116,9 +241,11 @@ class AuthController {
   }
 
   public async resend_email_vertfication_otp(req: Request, res: Response) {
-    const user = await userService.findUserByEmail(req);
+    const { email: retrivedEmail } = req.body;
 
-    if(!user) {
+    const user = await userService.findUserByEmail(retrivedEmail);
+
+    if (!user) {
       return res.status(404).json({
         message: MessageResponse.Error,
         description: "User does not exist!",
@@ -144,7 +271,7 @@ class AuthController {
   public async sign_in(req: Request, res: Response) {
     const { password, email } = req.body;
 
-    const user_exists = await userService.findUserByEmail(req);
+    const user_exists = await userService.findUserByEmail(email);
 
     if (!user_exists) {
       return res.status(400).json({
@@ -204,7 +331,7 @@ class AuthController {
   public async forgot_password_otp(req: Request, res: Response) {
     const { email } = req.body;
 
-    const user_exists = await userService.findUserByEmail(req);
+    const user_exists = await userService.findUserByEmail(email);
 
     if (user_exists) {
       const otp = generate_otp();

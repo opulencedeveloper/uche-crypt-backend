@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authController = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const google_auth_library_1 = require("google-auth-library");
 const auth_1 = require("../utils/auth");
 const utils_1 = require("../utils");
 const enum_1 = require("../utils/enum");
@@ -22,10 +23,94 @@ const auth_2 = require("../utils/auth");
 const service_1 = require("../user/service");
 const service_2 = require("./service");
 dotenv_1.default.config();
+const GOOGLE_AUTH_CLIENT_ID = process.env.GOOGLE_AUTH_CLIENT_ID;
+const GOOGLE_AUTH_CLIENT_SECRET = process.env.GOOGLE_AUTH_CLIENT_SECRET;
+const GOOGLE_AUTH_REDIRECT_URL = process.env.GOOGLE_AUTH_REDIRECT_URL;
+const redirectUrl = GOOGLE_AUTH_REDIRECT_URL;
 class AuthController {
+    generate_google_auth_url(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const client = new google_auth_library_1.OAuth2Client(GOOGLE_AUTH_CLIENT_ID, GOOGLE_AUTH_CLIENT_SECRET, redirectUrl);
+            const authorizeUrl = client.generateAuthUrl({
+                access_type: "offline",
+                scope: [
+                    "https://www.googleapis.com/auth/userinfo.profile",
+                    "https://www.googleapis.com/auth/userinfo.email",
+                ],
+                prompt: "consent",
+            });
+            return res.status(200).json({
+                message: enum_1.MessageResponse.Success,
+                description: "Auth Url generated successfully",
+                data: { authorizeUrl },
+            });
+        });
+    }
+    google_sign_in(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { code } = req.query;
+            const retrived_code = code;
+            const client = new google_auth_library_1.OAuth2Client(GOOGLE_AUTH_CLIENT_ID, GOOGLE_AUTH_CLIENT_SECRET, redirectUrl);
+            // Exchange authorization code for tokens
+            const responseInfo = yield client.getToken(retrived_code);
+            yield client.setCredentials(responseInfo.tokens);
+            const access_token = responseInfo.tokens.access_token;
+            if (!access_token) {
+                return res.status(404).json({
+                    message: enum_1.MessageResponse.Error,
+                    description: "Access token not found",
+                    data: null,
+                });
+            }
+            // Fetch the user info using the access token
+            const response = yield fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`);
+            const data = yield response.json();
+            const email = data.email;
+            if (!email) {
+                return res.status(404).json({
+                    message: enum_1.MessageResponse.Error,
+                    description: "User email not found!",
+                    data: null,
+                });
+            }
+            const user_exists = yield service_1.userService.findUserByEmail(email);
+            if (!user_exists) {
+                return res.status(404).json({
+                    message: enum_1.MessageResponse.Error,
+                    description: "Email does not exist!",
+                    data: null,
+                });
+            }
+            const is_email_verified = yield service_2.authService.check_email_verification_status(user_exists.email);
+            if (!is_email_verified) {
+                const verifyEmail = {
+                    email: user_exists.email,
+                };
+                const email_verified = yield service_2.authService.verify_email(verifyEmail);
+                if (!email_verified) {
+                    return res.status(404).json({
+                        message: enum_1.MessageResponse.Error,
+                        description: "User not found!",
+                        data: null,
+                    });
+                }
+            }
+            const token = jsonwebtoken_1.default.sign({ userId: user_exists._id }, process.env.JWT_SECRET, {
+                expiresIn: process.env.TOKEN_EXPIRY,
+            });
+            return res.status(200).json({
+                message: enum_1.MessageResponse.Success,
+                description: "Logged in successfully",
+                data: {
+                    token,
+                },
+            });
+        });
+    }
     sign_up(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userExists = yield service_1.userService.findUserByEmail(req);
+            const { email: retrivedEmail } = req.body;
+            const userExists = yield service_1.userService.findUserByEmail(retrivedEmail);
             if (userExists) {
                 return res.status(400).json({
                     message: enum_1.MessageResponse.Error,
@@ -103,7 +188,8 @@ class AuthController {
     }
     resend_email_vertfication_otp(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield service_1.userService.findUserByEmail(req);
+            const { email: retrivedEmail } = req.body;
+            const user = yield service_1.userService.findUserByEmail(retrivedEmail);
             if (!user) {
                 return res.status(404).json({
                     message: enum_1.MessageResponse.Error,
@@ -125,7 +211,7 @@ class AuthController {
     sign_in(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { password, email } = req.body;
-            const user_exists = yield service_1.userService.findUserByEmail(req);
+            const user_exists = yield service_1.userService.findUserByEmail(email);
             if (!user_exists) {
                 return res.status(400).json({
                     message: enum_1.MessageResponse.Error,
@@ -168,7 +254,7 @@ class AuthController {
     forgot_password_otp(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email } = req.body;
-            const user_exists = yield service_1.userService.findUserByEmail(req);
+            const user_exists = yield service_1.userService.findUserByEmail(email);
             if (user_exists) {
                 const otp = (0, utils_1.generate_otp)();
                 const emailVerify = yield service_2.authService.save_otp({ email, otp });

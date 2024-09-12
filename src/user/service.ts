@@ -5,8 +5,7 @@ import AllCourse from "../all_course/entity";
 import { CustomRequest } from "../utils/interface";
 
 class UserService {
-  public async findUserByEmail(req: Request) {
-    const { email } = req.body;
+  public async findUserByEmail(email: string) {
 
     const user = await User.findOne({
       email: email,

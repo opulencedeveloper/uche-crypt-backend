@@ -16,9 +16,8 @@ exports.userService = void 0;
 const entity_1 = __importDefault(require("./entity"));
 const entity_2 = __importDefault(require("../all_course/entity"));
 class UserService {
-    findUserByEmail(req) {
+    findUserByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { email } = req.body;
             const user = yield entity_1.default.findOne({
                 email: email,
             });
