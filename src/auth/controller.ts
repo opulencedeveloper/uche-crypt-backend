@@ -59,7 +59,7 @@ class AuthController {
 
     // Exchange authorization code for tokens
     const responseInfo = await client.getToken(retrived_code);
-    
+
     await client.setCredentials(responseInfo.tokens);
 
     const access_token = responseInfo.tokens.access_token;
@@ -199,6 +199,7 @@ class AuthController {
 
     let user;
 
+    //if an email has been created form goole sign up, then access that user and give  it a password
     if (userExists?.email && !userExists.password) {
      user = await authService.createUserPasswordAfterGoogleSignUp(
         userExists.email,

@@ -153,6 +153,7 @@ class AuthController {
                 });
             }
             let user;
+            //if an email has been created form goole sign up, then access that user and give  it a password
             if ((userExists === null || userExists === void 0 ? void 0 : userExists.email) && !userExists.password) {
                 user = yield service_2.authService.createUserPasswordAfterGoogleSignUp(userExists.email, password);
             }
