@@ -6,3 +6,11 @@ export interface IOTP {
 export interface IVerifiedEmail {
   email: string;
 }
+
+
+export interface GoogleUserInfo {
+  email: string;
+  name: string;
+  picture: string;
+  sub: string; 
+}

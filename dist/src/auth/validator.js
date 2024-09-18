@@ -16,7 +16,7 @@ exports.authValidator = void 0;
 const joi_1 = __importDefault(require("joi"));
 const enum_1 = require("../utils/enum");
 class AuthValidator {
-    google_signin(req, res, next) {
+    google_auth(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const schema = joi_1.default.object({
                 code: joi_1.default.string().required().messages({

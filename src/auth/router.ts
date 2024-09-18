@@ -13,8 +13,14 @@ AuthRouter.get(
 
 AuthRouter.post(
   "/google/signin",
-  [authValidator.google_signin],
+  [authValidator.google_auth],
   wrapAsync(authController.google_sign_in)
+);
+
+AuthRouter.post(
+  "/google/signup",
+  [authValidator.google_auth],
+  wrapAsync(authController.google_sign_up)
 );
 
 

@@ -69,7 +69,7 @@ class AuthController {
             if (!email) {
                 return res.status(404).json({
                     message: enum_1.MessageResponse.Error,
-                    description: "User email not found!",
+                    description: "User email not found in google!",
                     data: null,
                 });
             }
@@ -80,20 +80,6 @@ class AuthController {
                     description: "Email does not exist!",
                     data: null,
                 });
-            }
-            const is_email_verified = yield service_2.authService.check_email_verification_status(user_exists.email);
-            if (!is_email_verified) {
-                const verifyEmail = {
-                    email: user_exists.email,
-                };
-                const email_verified = yield service_2.authService.verify_email(verifyEmail);
-                if (!email_verified) {
-                    return res.status(404).json({
-                        message: enum_1.MessageResponse.Error,
-                        description: "User not found!",
-                        data: null,
-                    });
-                }
             }
             const token = jsonwebtoken_1.default.sign({ userId: user_exists._id }, process.env.JWT_SECRET, {
                 expiresIn: process.env.TOKEN_EXPIRY,
@@ -107,18 +93,79 @@ class AuthController {
             });
         });
     }
-    sign_up(req, res) {
+    google_sign_up(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { email: retrivedEmail } = req.body;
-            const userExists = yield service_1.userService.findUserByEmail(retrivedEmail);
-            if (userExists) {
-                return res.status(400).json({
+            const { code } = req.query;
+            const retrived_code = code;
+            const client = new google_auth_library_1.OAuth2Client(GOOGLE_AUTH_CLIENT_ID, GOOGLE_AUTH_CLIENT_SECRET, redirectUrl);
+            // Exchange authorization code for tokens
+            const responseInfo = yield client.getToken(retrived_code);
+            yield client.setCredentials(responseInfo.tokens);
+            const access_token = responseInfo.tokens.access_token;
+            if (!access_token) {
+                return res.status(404).json({
                     message: enum_1.MessageResponse.Error,
-                    description: "Email already exist!",
+                    description: "Access token not found",
                     data: null,
                 });
             }
-            const user = yield service_2.authService.createUser(req);
+            // Fetch the user info using the access token
+            const response = yield fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`);
+            const data = yield response.json();
+            const email = data.email;
+            if (!email) {
+                return res.status(404).json({
+                    message: enum_1.MessageResponse.Error,
+                    description: "User email not found in google!",
+                    data: null,
+                });
+            }
+            const user_exists = yield service_1.userService.findUserByEmail(email);
+            if (user_exists) {
+                return res.status(400).json({
+                    message: enum_1.MessageResponse.Error,
+                    description: "Email taken!",
+                    data: null,
+                });
+            }
+            const user = yield service_2.authService.createUserWithGoogle(email);
+            const token = jsonwebtoken_1.default.sign({ userId: user._id }, process.env.JWT_SECRET, {
+                expiresIn: process.env.TOKEN_EXPIRY,
+            });
+            return res.status(201).json({
+                message: enum_1.MessageResponse.Success,
+                description: "Logged in successfully",
+                data: {
+                    token,
+                },
+            });
+        });
+    }
+    sign_up(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { email: retrivedEmail, password } = req.body;
+            const userExists = yield service_1.userService.findUserByEmail(retrivedEmail);
+            if ((userExists === null || userExists === void 0 ? void 0 : userExists.email) && (userExists === null || userExists === void 0 ? void 0 : userExists.password)) {
+                return res.status(400).json({
+                    message: enum_1.MessageResponse.Error,
+                    description: "User already exist!",
+                    data: null,
+                });
+            }
+            let user;
+            if ((userExists === null || userExists === void 0 ? void 0 : userExists.email) && !userExists.password) {
+                user = yield service_2.authService.createUserPasswordAfterGoogleSignUp(userExists.email, password);
+            }
+            else {
+                user = yield service_2.authService.createUser(retrivedEmail, password);
+            }
+            if (!user) {
+                return res.status(404).json({
+                    message: enum_1.MessageResponse.Error,
+                    description: "User not found!",
+                    data: null,
+                });
+            }
             const otp = (0, utils_1.generate_otp)();
             const email = user.email;
             yield service_2.authService.save_otp({ email, otp });
@@ -213,6 +260,14 @@ class AuthController {
             const { password, email } = req.body;
             const user_exists = yield service_1.userService.findUserByEmail(email);
             if (!user_exists) {
+                return res.status(400).json({
+                    message: enum_1.MessageResponse.Error,
+                    description: "Wrong user credentials!",
+                    data: null,
+                });
+            }
+            //password is null when user signs up with google
+            if (!user_exists.password) {
                 return res.status(400).json({
                     message: enum_1.MessageResponse.Error,
                     description: "Wrong user credentials!",

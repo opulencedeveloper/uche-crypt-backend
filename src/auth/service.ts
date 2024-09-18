@@ -5,8 +5,7 @@ import { IOTP, IVerifiedEmail } from "./interface";
 import { hashPassword } from "../utils/auth";
 
 class AuthService {
-  public async createUser(req: Request) {
-    const { email, password } = req.body;
+  public async createUser(email: string, password: string) {
 
     const hashedPassword = (await hashPassword(password)) as string;
 
@@ -18,6 +17,32 @@ class AuthService {
     const userData = await user.save();
 
     return userData;
+  }
+
+  public async createUserWithGoogle(email: string) {
+    const user = new User({
+      email
+    });
+
+    const userData = await user.save();
+
+    return userData;
+  }
+
+  public async createUserPasswordAfterGoogleSignUp(email: string, password: string) {
+
+    const hashedPassword = (await hashPassword(password)) as string;
+
+    const user = await User.findOne({
+      email: email,
+    });
+
+    if (user) {
+      user.password = hashedPassword;
+      await user!.save();
+    }
+
+    return user;
   }
 
   public async save_otp(input: IOTP) {

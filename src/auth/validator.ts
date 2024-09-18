@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import { MessageResponse } from "../utils/enum";
 
 class AuthValidator {
-  public async google_signin(req: Request, res: Response, next: NextFunction) {
+  public async google_auth(req: Request, res: Response, next: NextFunction) {
     const schema = Joi.object({
       code: Joi.string().required().messages({
         "any.required": "Code is required",

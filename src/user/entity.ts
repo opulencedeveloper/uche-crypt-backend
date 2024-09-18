@@ -34,7 +34,7 @@ const userSchema: Schema = new Schema({
   },
   password: {
     type: String,
-    required: true,
+    default: null,
   },
   enrolled_courses: [enrolledCoursesSchema],
   email_verified: {

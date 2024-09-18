@@ -16,9 +16,8 @@ exports.authService = void 0;
 const entity_1 = __importDefault(require("../user/entity"));
 const auth_1 = require("../utils/auth");
 class AuthService {
-    createUser(req) {
+    createUser(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { email, password } = req.body;
             const hashedPassword = (yield (0, auth_1.hashPassword)(password));
             const user = new entity_1.default({
                 email,
@@ -26,6 +25,28 @@ class AuthService {
             });
             const userData = yield user.save();
             return userData;
+        });
+    }
+    createUserWithGoogle(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = new entity_1.default({
+                email
+            });
+            const userData = yield user.save();
+            return userData;
+        });
+    }
+    createUserPasswordAfterGoogleSignUp(email, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const hashedPassword = (yield (0, auth_1.hashPassword)(password));
+            const user = yield entity_1.default.findOne({
+                email: email,
+            });
+            if (user) {
+                user.password = hashedPassword;
+                yield user.save();
+            }
+            return user;
         });
     }
     save_otp(input) {
