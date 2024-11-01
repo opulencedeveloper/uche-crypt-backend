@@ -39,6 +39,10 @@ class AllCoursesValidator {
         "number.base": "Price must be a number",
         "any.required": "Price is required.",
       }),
+      naira_price: Joi.number().required().messages({
+        "number.base": "Naira price must be a number",
+        "any.required": "Naira price is required.",
+      }),
       slashed_price: Joi.number().required().messages({
         "number.base": "Slashed price must be a number",
         "any.required": "Slashed price is required.",

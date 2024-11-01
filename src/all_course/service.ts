@@ -7,6 +7,7 @@ class AllCoursesService {
   public async uploadCourse(req: Request) {
     const {
       video_url,
+      naira_price,
       title,
       description,
       price,
@@ -23,6 +24,7 @@ class AllCoursesService {
       title,
       description,
       price,
+      naira_price,
       slashed_price,
       slug: slugified,
       details,

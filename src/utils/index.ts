@@ -17,3 +17,7 @@ export const generate_otp = (): string  => {
   return Array.from({ length: 4 }, () => Crypto.randomInt(0, 10)).join('');
 }
 
+export function generateForeignId() {
+  return Crypto.randomBytes(16).toString('hex'); // Generates a 32-character hexadecimal string
+}
+

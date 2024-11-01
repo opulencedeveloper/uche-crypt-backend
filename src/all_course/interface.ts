@@ -16,6 +16,8 @@ export interface IAllCourses extends Document {
   title: string;
   description: string;
   price: number;
+  naira_price: number;
+  slashed_price: number;
   slug: string;
   details: string[];
   introduction: string;
